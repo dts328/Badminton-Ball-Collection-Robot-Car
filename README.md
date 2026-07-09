@@ -1,6 +1,6 @@
 # Badminton Ball Collection Robot Car
 
-**[中文文档 / Chinese Documentation](readme_cn.md)**
+**[中文文档 / Chinese Documentation](README_cn.md)**
 
 An intelligent robot system for badminton ball collection, featuring visual recognition, autonomous navigation, and precise grasping.
 
