@@ -1,0 +1,12 @@
+# Control Gripper Service
+# 夹爪控制服务
+
+# 请求
+bool open                    # true=打开 false=关闭
+float32 position             # 位置 (0-1, 0=全关 1=全开)
+float32 force                # 力限制 (N)
+
+---
+# 响应
+bool success                 # 是否成功
+string message               # 消息

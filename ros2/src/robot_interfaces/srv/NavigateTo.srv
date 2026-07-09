@@ -1,0 +1,13 @@
+# Navigate To Service
+# 导航到指定位置服务
+
+# 请求
+geometry_msgs/PoseStamped goal_pose  # 目标位姿
+float32 timeout                      # 超时时间 (s)
+bool use_behavior_tree               # 是否使用行为树
+
+---
+# 响应
+bool success                 # 是否成功
+string message               # 消息
+float32 elapsed_time         # 实际耗时 (s)

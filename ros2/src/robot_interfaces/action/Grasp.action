@@ -1,0 +1,19 @@
+# Grasp Action
+# 抓取动作 (带进度反馈)
+
+# 目标
+int32 target_class            # 目标类别: 0=完好球 1=破损球
+geometry_msgs/PoseStamped target_pose  # 目标位姿
+bool use_vision_guidance      # 是否使用视觉引导
+
+---
+# 结果
+bool success
+string message
+int32 final_class             # 最终抓取类别
+
+---
+# 反馈
+string current_phase          # 当前阶段: approaching/grasping/lifting/retreating
+float32 distance_to_target    # 到目标距离 (m)
+float32 gripper_aperture      # 夹爪开度 (m)

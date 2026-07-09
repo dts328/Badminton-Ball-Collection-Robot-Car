@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="smart_robot">
+  
+  <!-- ==================== 链组定义 ==================== -->
+  <!-- 机械臂组 -->
+  <group name="arm">
+    <joint name="joint1"/>
+    <joint name="joint2"/>
+    <joint name="joint3"/>
+    <joint name="joint4"/>
+    <joint name="joint5"/>
+  </group>
+  
+  <!-- 夹爪组 -->
+  <group name="gripper">
+    <joint name="gripper_left_joint"/>
+    <joint name="gripper_right_joint"/>
+  </group>
+  
+  <!-- 机械臂+夹爪组 -->
+  <group name="arm_with_gripper">
+    <group name="arm"/>
+    <group name="gripper"/>
+  </group>
+  
+  <!-- ==================== 预定义姿态 ==================== -->
+  <!-- 归零姿态 -->
+  <group_state name="home" group="arm">
+    <joint name="joint1" value="0"/>
+    <joint name="joint2" value="0"/>
+    <joint name="joint3" value="0"/>
+    <joint name="joint4" value="0"/>
+    <joint name="joint5" value="0"/>
+  </group_state>
+  
+  <!-- 准备姿态 -->
+  <group_state name="ready" group="arm">
+    <joint name="joint1" value="0"/>
+    <joint name="joint2" value="-1.57"/>
+    <joint name="joint3" value="1.57"/>
+    <joint name="joint4" value="0"/>
+    <joint name="joint5" value="0"/>
+  </group_state>
+  
+  <!-- 抓取姿态 -->
+  <group_state name="grasp" group="arm">
+    <joint name="joint1" value="0"/>
+    <joint name="joint2" value="-0.785"/>
+    <joint name="joint3" value="1.57"/>
+    <joint name="joint4" value="-0.785"/>
+    <joint name="joint5" value="0"/>
+  </group_state>
+  
+  <!-- 放置姿态 -->
+  <group_state name="place" group="arm">
+    <joint name="joint1" value="1.57"/>
+    <joint name="joint2" value="-0.785"/>
+    <joint name="joint3" value="1.57"/>
+    <joint name="joint4" value="-0.785"/>
+    <joint name="joint5" value="0"/>
+  </group_state>
+  
+  <!-- 夹爪打开 -->
+  <group_state name="open" group="gripper">
+    <joint name="gripper_left_joint" value="0.025"/>
+    <joint name="gripper_right_joint" value="0.025"/>
+  </group_state>
+  
+  <!-- 夹爪关闭 -->
+  <group_state name="close" group="gripper">
+    <joint name="gripper_left_joint" value="0"/>
+    <joint name="gripper_right_joint" value="0"/>
+  </group_state>
+  
+  <!-- ==================== 碰撞排除 ==================== -->
+  <!-- 相邻连杆不需要碰撞检测 -->
+  <disable_collisions link1="base_link" link2="wheel_fl" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_fr" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_bl" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_br" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="arm_base" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="laser_frame" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="orbbec_frame" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="camera_frame" reason="Adjacent"/>
+  
+  <disable_collisions link1="arm_base" link2="link1" reason="Adjacent"/>
+  <disable_collisions link1="link1" link2="link2" reason="Adjacent"/>
+  <disable_collisions link1="link2" link2="link3" reason="Adjacent"/>
+  <disable_collisions link1="link3" link2="link4" reason="Adjacent"/>
+  <disable_collisions link1="link4" link2="link5" reason="Adjacent"/>
+  <disable_collisions link1="link5" link2="gripper_base" reason="Adjacent"/>
+  <disable_collisions link1="gripper_base" link2="gripper_left" reason="Adjacent"/>
+  <disable_collisions link1="gripper_base" link2="gripper_right" reason="Adjacent"/>
+  
+  <!-- ==================== 虚拟关节 ==================== -->
+  <!-- 如果需要浮动基座 -->
+  <!--
+  <virtual_joint name="virtual_joint" type="floating" parent_frame="world" child_link="base_link"/>
+  -->
+  
+  <!-- ==================== 端执行器 ==================== -->
+  <end_effector name="gripper_ee" parent_link="link5" group="gripper" parent_group="arm"/>
+  
+  <!-- ==================== 被动关节 ==================== -->
+  <!-- 轮子是被动关节，不参与规划 -->
+  <passive_joint name="wheel_fl_joint"/>
+  <passive_joint name="wheel_fr_joint"/>
+  <passive_joint name="wheel_bl_joint"/>
+  <passive_joint name="wheel_br_joint"/>
+  
+</robot>

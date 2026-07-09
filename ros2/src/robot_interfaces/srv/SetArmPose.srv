@@ -1,0 +1,11 @@
+# Set Arm Pose Service
+# 设置机械臂姿态服务
+
+# 请求
+string pose_name             # 预姿态名称: home/ready/grasp/place/custom
+float32[6] joint_angles      # 自定义关节角度 (当pose_name=custom时使用)
+
+---
+# 响应
+bool success                 # 是否成功
+string message               # 消息

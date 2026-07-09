@@ -1,0 +1,52 @@
+# MoveIt2 Parameters for 5-DOF Robot Arm
+# 5自由度机械臂MoveIt2配置
+
+move_group:
+  ros__parameters:
+    planning_plugin: "ompl_interface/OMPLPlanner"
+    planning_pipelines:
+      - "ompl"
+    
+    ompl:
+      planning_plugin: "ompl_interface/OMPLPlanner"
+      request_adapters: "default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints"
+      start_state_max_bounds_error: 0.1
+    
+    # 运动学求解器
+    kinematics_solver: "kdl_kematics_plugin/KDLKinematicsPlugin"
+    kinematics_solver_search_resolution: 0.005
+    kinematics_solver_timeout: 0.05
+    kinematics_solver_attempts: 3
+    
+    # 规划参数
+    default_workspace_bounds: [0.0, -1.0, 0.0, 2.0, 1.0, 2.0]
+    
+    # 碰撞检测
+    collision_detection:
+      plugin: "moveit_core/CollisionDetectorFCL"
+    
+    # 轨迹执行
+    trajectory_execution:
+      allowed_execution_duration_scaling: 1.2
+      allowed_goal_duration_margin: 0.5
+      execution_duration_monitoring: false
+      manage_controllers: true
+    
+    # 控制器配置
+    moveit_controller_manager: "moveit_simple_controller_manager/MoveItSimpleControllerManager"
+    moveit_simple_controller_manager:
+      controller_list:
+        - name: arm_controller
+          action_type: FollowJointTrajectoryAction
+          default: true
+          joints:
+            - joint1
+            - joint2
+            - joint3
+            - joint4
+            - joint5
+        - name: gripper_controller
+          action_type: GripperCommandAction
+          default: true
+          joints:
+            - gripper_joint

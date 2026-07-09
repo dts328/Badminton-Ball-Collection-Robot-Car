@@ -1,0 +1,19 @@
+# Navigate Action
+# 导航动作 (带进度反馈)
+
+# 目标
+geometry_msgs/PoseStamped goal_pose
+float32 timeout
+
+---
+# 结果
+bool success
+string message
+float32 elapsed_time
+float32 distance_traveled
+
+---
+# 反馈
+float32 distance_remaining    # 剩余距离 (m)
+float32 estimated_time        # 预计到达时间 (s)
+string current_state          # 当前状态

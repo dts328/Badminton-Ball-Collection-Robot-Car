@@ -1,0 +1,47 @@
+# Nav2 Navigation Parameters
+# 适用于麦克纳姆轮全向底盘
+
+amcl:
+  ros__parameters:
+    use_map_topic: true
+    scan_topic: /scan
+    odom_frame_id: odom
+    base_frame_id: base_link
+    global_frame_id: map
+    
+    # 粒子滤波参数
+    min_particles: 500
+    max_particles: 5000
+    kld_err: 0.02
+    kld_z: 0.99
+    
+    # 里程计模型参数（麦克纳姆轮）
+    odom_model_type: diff
+    odom_alpha1: 0.2
+    odom_alpha2: 0.2
+    odom_alpha3: 0.2
+    odom_alpha4: 0.2
+    odom_alpha5: 0.2
+    
+    # 激光模型参数
+    laser_model_type: likelihood_field
+    laser_max_beams: 60
+    laser_max_range: 12.0
+    laser_min_range: 0.1
+    laser_z_hit: 0.95
+    laser_z_rand: 0.05
+    laser_sigma_hit: 0.2
+    
+    # 初始位姿
+    initial_pose_x: 0.0
+    initial_pose_y: 0.0
+    initial_pose_z: 0.0
+    initial_pose_a: 0.0
+    
+    # 更新参数
+    update_min_d: 0.1
+    update_min_a: 0.2
+    resample_interval: 1
+    transform_tolerance: 0.1
+    recovery_alpha_slow: 0.001
+    recovery_alpha_fast: 0.1

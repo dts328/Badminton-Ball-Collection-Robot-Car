@@ -1,0 +1,21 @@
+# Patrol Action
+# 巡航动作 (带进度反馈)
+
+# 目标
+geometry_msgs/PoseStamped[] waypoints  # 巡航点列表
+bool loop                              # 是否循环
+int32 max_laps                         # 最大圈数
+
+---
+# 结果
+bool success
+string message
+int32 completed_laps         # 完成圈数
+int32 total_detections       # 总检测次数
+
+---
+# 反馈
+int32 current_waypoint       # 当前航点索引
+int32 current_lap            # 当前圈数
+float32 distance_to_next     # 到下一航点距离 (m)
+string current_state         # 当前状态: navigating/detected/tracking

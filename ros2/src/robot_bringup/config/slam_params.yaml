@@ -1,0 +1,49 @@
+# SLAM Toolbox Parameters
+# 适用于LD06激光雷达
+
+slam_toolbox:
+  ros__parameters:
+    # 插件配置
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+    
+    # 地图参数
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan
+    mode: mapping  # mapping / localization
+    
+    # 扫描匹配参数
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_fine: 350.0
+    loop_match_minimum_response_coarse: 70.0
+    
+    # 分辨率
+    resolution: 0.05
+    minimum_time_interval: 0.5
+    transform_timeout: 0.2
+    tf_buffer_duration: 30.0
+    
+    # 里程计参数
+    use_scan_matching: true
+    use_scan_barycenter: true
+    position_covariance_scale: 0.25
+    yaw_covariance_scale: 0.01
+    
+    # 距离阈值
+    minimum_travel_distance: 0.5
+    minimum_travel_heading: 0.5
+    
+    # 信号处理
+    signal_handler_type: 1

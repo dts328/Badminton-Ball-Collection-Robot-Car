@@ -1,0 +1,45 @@
+# STM32 Build Output
+stm32/MDK-ARM/Listings/
+stm32/MDK-ARM/Objects/
+*.o
+*.d
+*.lst
+*.map
+*.crf
+*.dep
+*.axf
+
+# ROS2 Build
+ros2/build/
+ros2/install/
+ros2/log/
+ros2/__pycache__/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Generated files
+*.pdf
+*.png
+*.jpg
+*.svg
+*.emf
+*.docx
+*.mat
+*.csv
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+# Trigger Detection Service
+# 触发视觉识别服务
+
+# 请求
+bool trigger                 # 触发识别
+int32 max_wait_time_ms       # 最大等待时间 (ms)
+
+---
+# 响应
+bool success                 # 是否成功
+int32 class_id               # 识别类别
+float32 confidence           # 置信度
+geometry_msgs/PoseStamped pose  # 目标位姿
+string message               # 消息

@@ -1,0 +1,72 @@
+# Controller Parameters for Mecanum Wheel Robot
+# 麦克纳姆轮全向控制器参数
+
+controller_server:
+  ros__parameters:
+    use_sim_time: false
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.001
+    min_theta_velocity_threshold: 0.001
+    progress_checker_plugin: "progress_checker"
+    goal_checker_plugins: ["goal_checker"]
+    controller_plugins: ["FollowPath"]
+    
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+    
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+      stateful: true
+    
+    # DWB Local Planner - 全向运动
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: true
+      
+      # 速度限制
+      min_vel_x: -0.5
+      min_vel_y: -0.5
+      max_vel_x: 1.0
+      max_vel_y: 1.0
+      max_vel_theta: 2.0
+      
+      # 速度阈值
+      min_speed_xy: 0.0
+      max_speed_xy: 1.0
+      min_speed_theta: 0.0
+      
+      # 加速度限制
+      acc_lim_x: 2.5
+      acc_lim_y: 2.5
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: -2.5
+      decel_lim_theta: -3.2
+      
+      # 采样参数（全向运动需要更多采样）
+      vx_samples: 20
+      vy_samples: 20
+      vtheta_samples: 40
+      
+      # 仿真参数
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      
+      # 目标容差
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.1
+      short_circuit_trajectory_evaluation: true
+      stateful: true
+      
+      # 评价函数权重
+      GoalDist.scale: 24.0
+      PathDist.scale: 32.0
+      OscillationResetDist: 0.15
+      OscillationResetAngle: 0.2
