@@ -3,6 +3,8 @@
 RDK X5 BPU Inference Node
 地平线RDK X5 BPU推理节点 - YOLOv8-Pose目标检测
 基于实际BPU推理代码集成
+
+注意: 此节点必须在RDK X5上运行，需要hobot_dnn库
 """
 
 import sys
@@ -14,14 +16,17 @@ import numpy as np
 try:
     import cv2
 except ImportError:
-    print("OpenCV missing. Run: pip install opencv-python")
+    print("ERROR: OpenCV missing. Run: pip install opencv-python")
     sys.exit(1)
 
+# 强制要求hobot_dnn
 try:
     from hobot_dnn import pyeasy_dnn as dnn
 except ImportError:
-    print("hobot_dnn missing, using simulation mode")
-    dnn = None
+    print("ERROR: hobot_dnn is REQUIRED!")
+    print("This node must run on RDK X5 with hobot_dnn installed.")
+    print("Install: apt install hobot-dnn")
+    sys.exit(1)
 
 import rclpy
 from rclpy.node import Node
@@ -297,14 +302,14 @@ class BPUInference(Node):
         camera_id = self.get_parameter('camera_id').get_parameter_value().integer_value
         self.enable_vis = self.get_parameter('enable_visualization').get_parameter_value().bool_value
         
-        # 加载模型
-        self.model = None
-        self.load_model(model_path)
+        # 加载模型 (必须成功)
+        self.model = self.load_model(model_path)
         
         # 打开摄像头
         self.cap = cv2.VideoCapture(camera_id)
         if not self.cap.isOpened():
-            self.get_logger().error('Camera failed to open')
+            self.get_logger().error('Camera failed to open!')
+            raise RuntimeError('Camera init failed')
         
         # 发布者
         self.detection_pub = self.create_publisher(String, '/detection/raw', 10)
@@ -328,19 +333,17 @@ class BPUInference(Node):
         self.get_logger().info(f'Vote: size={VOTE_SIZE}, threshold={VOTE_DMG_THRESH}')
     
     def load_model(self, model_path):
-        """加载BPU模型"""
+        """加载BPU模型 - 必须成功"""
         try:
-            if dnn is not None:
-                self.model = dnn.load(model_path)[0]
-                self.get_logger().info(f'Model loaded: {model_path}')
-                for o in self.model.outputs:
-                    self.get_logger().info(f'  Output: {o.name} {o.shape}')
-            else:
-                self.get_logger().warn('hobot_dnn not available, simulation mode')
-                self.model = None
+            model = dnn.load(model_path)[0]
+            self.get_logger().info(f'Model loaded: {model_path}')
+            for o in model.outputs:
+                self.get_logger().info(f'  Output: {o.name} {o.shape}')
+            return model
         except Exception as e:
-            self.get_logger().error(f'Failed to load model: {e}')
-            self.model = None
+            self.get_logger().error(f'Model load FAILED: {e}')
+            self.get_logger().error('Make sure model file exists and is valid.')
+            raise RuntimeError(f'Model load failed: {e}')
     
     def inference_loop(self):
         """推理主循环"""
@@ -358,12 +361,8 @@ class BPUInference(Node):
         data = preprocess(frame)
         t1 = time.time()
         
-        # BPU推理
-        if self.model is not None:
-            raw = self.model.forward(data)
-        else:
-            # 模拟模式
-            raw = self.simulate_inference()
+        # BPU推理 (必须成功)
+        raw = self.model.forward(data)
         t2 = time.time()
         
         # 后处理
@@ -414,17 +413,6 @@ class BPUInference(Node):
         
         self.frame_count += 1
     
-    def simulate_inference(self):
-        """模拟推理输出 (无BPU时使用)"""
-        outputs = []
-        for i in range(3):
-            h = w = IMG_SIZE // STRIDES[i]
-            box = np.random.randn(4 * REG_MAX, h, w).astype(np.float32)
-            cls = np.random.randn(NC, h, w).astype(np.float32)
-            pose = np.random.randn(NK * 3, h, w).astype(np.float32)
-            outputs.extend([box, cls, pose])
-        return outputs
-    
     def publish_detections(self, boxes, scores, cls_ids, kpts, verdicts, stamp):
         """发布检测结果到ROS话题"""
         for i, (box, sc, cid, kpt, (ok, detail)) in enumerate(
@@ -472,14 +460,16 @@ class BPUInference(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = BPUInference()
     
     try:
+        node = BPUInference()
         rclpy.spin(node)
+    except RuntimeError as e:
+        print(f"FATAL: {e}")
+        sys.exit(1)
     except KeyboardInterrupt:
         pass
     finally:
-        node.destroy_node()
         rclpy.shutdown()
 
 

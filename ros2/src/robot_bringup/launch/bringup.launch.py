@@ -1,22 +1,13 @@
 #!/usr/bin/env python3
 """
-Smart Robot Bringup Launch File
+Bringup Launch File
 启动所有核心节点
 """
 
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import (
-    DeclareLaunchArgument,
-    IncludeLaunchDescription,
-    ExecuteProcess,
-    RegisterEventHandler,
-    GroupAction
-)
-from launch.conditions import IfCondition
-from launch.event_handlers import OnProcessExit
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -27,7 +18,6 @@ def generate_launch_description():
     description_dir = get_package_share_directory('robot_description')
     
     # 配置文件路径
-    nav2_params = os.path.join(bringup_dir, 'config', 'nav2_params.yaml')
     rviz_config = os.path.join(bringup_dir, 'rviz', 'robot.rviz')
     urdf_file = os.path.join(description_dir, 'urdf', 'robot.urdf')
     
@@ -37,6 +27,7 @@ def generate_launch_description():
     
     # 启动参数
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    use_rviz = LaunchConfiguration('rviz', default='false')
     
     # Robot State Publisher
     robot_state_publisher = Node(
@@ -136,10 +127,10 @@ def generate_launch_description():
         ]
     )
     
-    # 机械臂控制节点
+    # 机械臂控制节点（合并关节和夹爪）
     arm_controller = Node(
         package='arm_controller',
-        executable='moveit_client',
+        executable='arm_controller',
         name='arm_controller',
         output='screen',
         parameters=[
@@ -147,15 +138,6 @@ def generate_launch_description():
             {'baudrate': 115200},
             {'use_sim_time': use_sim_time}
         ]
-    )
-    
-    # 夹爪控制节点
-    gripper_control = Node(
-        package='arm_controller',
-        executable='gripper_control',
-        name='gripper_control',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}]
     )
     
     # 任务调度节点
@@ -174,7 +156,7 @@ def generate_launch_description():
         name='rdkx5_inference',
         output='screen',
         parameters=[
-            {'model_path': 'models/yolov8pose.bin'},
+            {'model_path': 'models/yolov8n_pose_rdkx5.bin'},
             {'use_sim_time': use_sim_time}
         ]
     )
@@ -186,26 +168,35 @@ def generate_launch_description():
         name='rviz2',
         output='screen',
         arguments=['-d', rviz_config],
-        parameters=[{'use_sim_time': use_sim_time}],
-        condition=IfCondition(LaunchConfiguration('rviz', default='false'))
+        parameters=[{'use_sim_time': use_sim_time}]
     )
     
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('rviz', default_value='false'),
         
+        # 基础驱动
         robot_state_publisher,
         joint_state_publisher,
         chassis_driver,
         odom_publisher,
         ldlidar_node,
         orbbec_node,
+        
+        # 视觉处理
         rdkx5_receiver,
         depth_converter,
         target_tracker,
+        
+        # 机械臂
         arm_controller,
-        gripper_control,
+        
+        # 任务管理
         task_manager,
+        
+        # BPU推理
         rdkx5_inference,
+        
+        # 可视化
         rviz2,
     ])

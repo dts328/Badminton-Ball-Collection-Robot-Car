@@ -3,12 +3,12 @@
 
 #include "main.h"
 
-/* Physical parameters */
-#define WHEEL_DIAMETER      0.097f      /* Wheel diameter in meters */
+/* Physical parameters (actual measurement) */
+#define WHEEL_DIAMETER      0.097f      /* Wheel diameter 97mm */
 #define WHEEL_PERIMETER     (WHEEL_DIAMETER * 3.14159265f)
-#define WHEEL_SPACING       0.096f      /* Left/right wheel center spacing (half) in meters */
-#define AXLE_SPACING        0.060f      /* Front/rear wheel center spacing (half) in meters */
-#define ENCODER_PRECISION    122880.0f   /* 1024 * 4 * 30 */
+#define WHEEL_SPACING       0.118f      /* Left/right wheel center spacing (half) = 236mm/2 */
+#define AXLE_SPACING        0.060f      /* Front/rear wheel center spacing (half) = 120mm/2 */
+#define ENCODER_PRECISION    4096.0f     /* 1024 * 4 = 4096 PPR */
 #define CONTROL_FREQUENCY   100         /* 100Hz control frequency */
 
 /* Encoder structure */

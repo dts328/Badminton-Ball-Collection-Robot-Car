@@ -15,8 +15,8 @@ amcl:
     kld_err: 0.02
     kld_z: 0.99
     
-    # 里程计模型参数（麦克纳姆轮）
-    odom_model_type: diff
+    # 里程计模型参数（麦克纳姆轮全向底盘）
+    odom_model_type: omni
     odom_alpha1: 0.2
     odom_alpha2: 0.2
     odom_alpha3: 0.2

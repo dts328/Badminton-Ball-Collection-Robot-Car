@@ -19,6 +19,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'arm_controller = arm_controller.arm_controller:main',
             'moveit_client = arm_controller.moveit_client:main',
             'gripper_control = arm_controller.gripper_control:main',
         ],
